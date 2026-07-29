@@ -105,6 +105,9 @@ Study Notes
 - [ ] [Docs - FFmpeg](https://ffmpeg.org/documentation.html)
 - [ ] [Docs - ImageMagick](https://imagemagick.org/command-line-processing/)
 
+## Computer Graphics
+- [ ] [Course - Learn Wgpu](https://sotrh.github.io/learn-wgpu/)
+
 ## Networking
 - [ ] [Book - Beej's Guide to Network Programming](https://beej.us/guide/bgnet/)
 - [ ] [Docs - QUIC Explained](https://quic.xargs.org/)
@@ -135,7 +138,6 @@ Study Notes
 # Art
 - [ ] [Docs - Blender Python API](https://docs.blender.org/api/current/)
 - [ ] [Docs - Blender Features](https://developer.blender.org/docs/features/)
-- [ ] [Course - Learn Wgpu](https://sotrh.github.io/learn-wgpu/)
 - [ ] [Docs - Bevy](https://bevy.org/learn/)
 - [ ] [Docs - Audacity](https://manual.audacityteam.org/index.html)
 - [ ] [Docs - MuseScore](https://handbook.musescore.org/)
