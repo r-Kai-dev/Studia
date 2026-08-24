@@ -122,3 +122,88 @@
 - Set repeated values: `let x = [3; 5];` is equivalent to `let x = [3, 3, 3, 3, 3]`.
 - Element access via index: `let first = a[0];`
 - Rust checks at runtime whether the index is within bounds. This check is necessary because index values can be dynamic (determined at runtime). Rust panics on out-of-bounds access rather than allowing invalid memory access — a key part of Rust's "memory-safe" design.
+
+- - -
+
+# Functions
+
+## Define a function
+- Minimal syntax of a function: `fn <func-name> {<statements-and/or-expressions>}`
+- For functions calling other functions, the order of the function defintions in the program does not matter.
+
+## Arguments (Parameters)
+- Arguments: `fn <func-name> (<arg1>: <data-type>, <arg2>: <data-type>) {}`
+- Data types of arguments must be declared.
+
+## Statement v.s. Expression v.s. Items
+- Rust blocks are consist of 3 types of code: expressions, statements, and items.
+- Statements are instructions that performance some action and do not return a value. Examples:
+    - Creating a variable using `let`
+    - Defining a function
+- Expression evaluate to a resultant value. Examples:
+    - Call a function or macro
+    - A new scope created by curly brackets `{}`
+- Items are declarations like `fn`, `struct`, `impl`. They are not values, nor part of execution order, just definitions teh compiler resolves.
+- Adding a trailing `;` to an expression turns it into a statement.
+
+## Return value
+- Implicitily, the return value of a function is the value of the final expression of the function body, when no `return` is used.
+- Functions can return early by using `return` keyword explicity, for example `return x;`.
+- Return value type: `fn <func-name> -> <return-data-type> {}`
+- Be careful not to end the returned expression with a semicolon `;`. It converts the expression into a statement, so the function no longer returns the desired result.
+
+- - -
+
+# Control Flow
+
+## if expression
+- Syntax: `if <condition> {arm} else if <condition> {arm} else {arm}`
+- A condition must be `bool`.
+- Use `match` if there are too many branches.
+- The whole `if` block is an expression with no `;` at the end.
+- `if` expression can be used as the right side of `let` statement: `let x = if y > 0 { 1 } else { -1 };`.
+- If at least one branch of `if` evalutes to a value (is an expression), all other branches must evaluates to that same type.
+
+## Loops
+- 3 looping keywords: `loop` (a generic and customizable loop), `while` and `for`.
+- `loop` syntax: `loop {}`
+- `while` syntax: `while <condition> {}`
+- `for` syntax: `for number in array/(i..j) {}`
+- Loops are expressions.
+- Only `loop` can evaluate to a meaningful value, while `for` and `while` loops evaluate to unit type `()`.
+- `break` can be used to break out (stop) the innermost loop.
+- `break <value>;` can be used in `loop` (not `for` or `while`) to break the loop and evaluate to that value.
+- `continue;` can be used to rest of the code inside the innermost loop.
+- `return` inside a loop not only break the loop, but also the function.
+
+- - -
+
+# Ownership
+
+## Stack v.s. Heap
+- The stack is the part of memory that stores values in "Last-In, First-Out" (LIFO) order, pushing (creating) and dropping values (data) as needed.
+- The heap is the part of memory where each value is allocated into an empty location, with a pointer returned as the address.
+- The stack is faster, given it's LIFO nature and because CPUs often keep stack data in cache.
+- Heap memory pointers are stored on the stack.
+- Data types with fixed lengths are stored on the stack, like numerics, characters, bools, tuples, and arrays.
+- Data types with dynamic lengths (can change at run time) are stored on the heap, like vectors and strings.
+
+## Ownership Rules
+- Fundamental rules:
+    - Each value has an owner (variable).
+    - There can only be one owner at a time.
+    - When the owner (variable) goes out of scope, the value will be dropped.
+- `drop`: when a variable owning a value goes out of scope, the `drop` function is called to remove the value from memory.
+- The `drop` function is itself an empty function that take the value's ownership via it's argument. As a result, once `drop` is called, the value goes out of scope and is dropped from memory.
+
+## Copy v.s. Move
+- Copy: when assigned to a new variable (e.g. `=` or passed as a function argument), values of types with the `Copy` trait are copied and then assigned to the new variable.
+- Move: when assigned to a new variable (e.g. `=` or passed as a function argument), values of types without the `Copy` trait is `moved` to the new variable, and the value is `dropped` when that new variable goes out of scope.
+- `clone` method: deep-copies a heap value on demand. Example: String type as a `clone` method. Deep cloning means not only copying the pointers in stack, but also actually make a copy of the data in heap.
+- Traits and memory allocation: values on the heap cannot have the `Copy` trait, and a type can never implement both `Copy` and `Drop` at once.
+
+## Ownership & Functions
+- Passing a variable to a function's argument will move or copy the value, similar to assigning values to a new variable.
+- For a variable bound to a value without the `Copy` trait (can be on stack or heap), calling a function with that variable passed as an argument makes the function take ownership of the value, with the argument variable as the value's new owner. Once the function call finishes, the value is dropped from memory since the scope of the argument variable ends.
+- For a variable bound to a value with the `Copy` train (must be on stack), calling a function with that variable passed as an argument does not move the ownership of the value. Instead, a copy is made on the stack and assigned to the function's argument variable.
+- Returned values from functions act exactly the same as other values: when assigned to a variable, they either move ownership to the variable or are copied and assigned to it.
