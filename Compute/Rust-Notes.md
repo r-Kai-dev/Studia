@@ -207,3 +207,44 @@
 - For a variable bound to a value without the `Copy` trait (can be on stack or heap), calling a function with that variable passed as an argument makes the function take ownership of the value, with the argument variable as the value's new owner. Once the function call finishes, the value is dropped from memory since the scope of the argument variable ends.
 - For a variable bound to a value with the `Copy` train (must be on stack), calling a function with that variable passed as an argument does not move the ownership of the value. Instead, a copy is made on the stack and assigned to the function's argument variable.
 - Returned values from functions act exactly the same as other values: when assigned to a variable, they either move ownership to the variable or are copied and assigned to it.
+
+## Reference & Borrowing
+- When moving ownership is not desired, a reference to a variable can be created. The action of creating a reference is called borrowing.
+- A reference is a new pointer that points to the variable's pointer.
+- Function arguments need to be defined as references in order to borrow a variable. Example: `fn some_func(s: &String) {}`. Note the `&` comes before the argument type.
+- References are immutable by default, meaning the original value cannot be updated within the scope of that reference.
+- The original values behind mutable references can be updated. Example: `fn some_func(s: &mut String) {}`
+- The original variable needs to be `mut` as well. Example: `let mut x = String::from("hello");`
+- To avoid data races, a mutable reference cannot coexist with any other reference, mutable or not. More specifically, a mutable reference cannot be in scope while any other reference to the same data is in scope. However, they can appear in the same program, as long as one reference goes out of scope before another comes into scope.
+- References must always be valid — no dangling references are allowed. In other words, once a variable goes out of scope, any further reference to it will result in a compiler error.
+
+## Slice Type
+- A slice is a reference to a contiguous sequence of elements in a collection. No ownership is moved.
+- Slice syntax: `&s[n..m]`, where `n` defaults to 0 if omitted, and `m` defaults to the length of the collection if omitted.
+- Slices have their own types. For example, a slice of a `String` has the string slice type `&str`; a slice of an array of `i32` integers has the type `&[i32]`.
+- String literals have slice type `&str` as they are slices of the program binary.
+- Defining function arguments as string slice type instead of strings is a flexible way to extend the functionality. Because both string slices and strings can be used as the argument values.
+
+- - -
+
+# Structs
+
+## Struct definition
+- A struct in Rust is similar to a class in some other languages.
+- A struct is defined as a group of fields names and their data types.
+- Instances can be created from a defined struct where specific field values are used.
+- An instance of a struct `struct1` is of type `struct1`.
+- Dot notation is used to access values of a field like `instance.field_name`.
+- Mutable instances of a struct allow the field values to be updated via the dot notation.
+- A instance is either entirely mutable or none fields are mutable.
+
+## Struct related shorthands
+- Fild init shorthand: When creating an instance within a function with arguments values used as field values, defining the argument names same as the field names. This way, the instance fields can be simplified as `<field-name>` instead of `<field-name>:<argument-name>`.
+- Struct update syntax: When creating a second instance with overlapping value with an existing instance, instead of `<field>: instance1.field`, a shorhand `..instance1` can be used to use the same field values with the existing instance, except for the fields assigned different values.
+- When struct update syntax (`..instance1`) is used, the original instance may be invalid if some field data's ownership are moved into the new instanace. In other words, the ownership rules of struct update synatx is same with `=` assignment for each field. If the field type as `Copy` trait, it is copied on stack, otherwise the ownership is moved to the fields of the new instance thus making the old instance invalid.
+
+## 2 Spcecial Structs
+- Tuple Struct: no field names, just types. `<struct-name>(<type1>, <type2>, ...)`
+    - Can be deconstructed like tuples, but struct type name must be used: `let <struct-name>(x, y, z) = <instance-name>` assign proper values to variables `x`, `y`, `z`.
+    - Field values can be accessed by using `<instance>.<index>`, same with a tuple.
+- Unit-like Structs: empty structs with a name only, convenient to define traits.
